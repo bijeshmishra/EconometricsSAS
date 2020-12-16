@@ -1,0 +1,41 @@
+PROC IMPORT OUT= WORK.bm 
+            DATAFILE= "C:\Users\casnrlab_agh128\Desktop\EconHW\HW1-DATA.xls" 
+            DBMS= EXCEL REPLACE;
+     GETNAMES=YES;
+     DATAROW=2; 
+RUN;
+dbms = excel replace;
+range = sheet1$
+getnames = yes;
+mixed = no;
+scantext = yes;
+scantime = yes;
+run;
+data bm; set bm;
+lny = log (y);
+lnX = log(x);
+run;
+proc print;
+run;
+proc reg data = bm;
+model lny = ln(x);
+test lnx = 1;
+test intercept = 0;
+test lnx = 0;
+run;
+
+data bm; set bm;
+lny = log(y);
+lnx = log(x);
+lne = log(e);
+lnt = log(t);
+
+proc print;
+run;
+
+proc reg data = bm;
+model lny = lnx lne lnt;
+test lne-lnt = 0;
+run;
+
+

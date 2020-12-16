@@ -1,0 +1,128 @@
+ /* Create Library with the name ex */
+libname EX "C:\Users\bmishra\Desktop\SAS\SASsession2019";
+run;
+
+/*import data (manually using import data tab under file and then open program (data1) that was created while importing data */ 
+PROC IMPORT OUT= EX.DEMO1 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo1.xlsx" 
+            DBMS=EXCEL REPLACE;
+     RANGE="Sheet1$"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+/*calcuating mean */
+data ex.example; set ex.demo1;
+avexam = (exam1+exam2)/2;
+run;
+proc print;
+run;
+
+/*set or merge */
+/*Import demo11_set1 and demo11_set2 to merge */
+PROC IMPORT OUT= WORK.demo11_set1 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo1
+1_set1.xlsx" 
+            DBMS=EXCEL REPLACE;
+     RANGE="Sheet1$"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+PROC IMPORT OUT= WORK.DEMO11_SET2 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo11_set2.xlsx" 
+            DBMS=EXCEL REPLACE;
+     RANGE="Sheet1$"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+/* merge demo11_set1 and demo11_set2 into demo1_set */
+data demo1_set; 
+set demo11_set1 demo11_set2;
+run;
+proc print;
+run;
+/* merge demo11_merge1 and demo11_merge2 into demo1_merge and add new variable with average of two variales exam1 and exam2 */
+PROC IMPORT OUT= WORK.DEMO1_MERGE1 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo11_merge1.xlsx" 
+            DBMS=EXCEL REPLACE;
+     RANGE="Sheet1$"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+PROC IMPORT OUT= WORK.DEMO1_MERGE2 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo11_merge2.xlsx" 
+            DBMS=EXCEL REPLACE;
+     RANGE="Sheet1$"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+data demo1_merge;
+merge DEMO1_MERGE1 DEMO1_MERGE2;
+average = (exam1+exam2)/2;
+run;
+proc print;
+run;
+/* Drop */
+/* from above merged dataset (demo1_merge),drop newly created variable "average" using drop funciton */
+data demo1_drop;
+set demo1_merge;
+drop average;
+run;
+proc print;
+run;
+
+/* prog REG */
+/* Import Demo2.xls and Run Program Demo2 which was created while importing data.*/
+PROC IMPORT OUT= WORK.DEMO2 
+            DATAFILE= "C:\Users\bmishra\Desktop\SAS\SASsession2019\Demo2.xls" 
+            DBMS=EXCEL REPLACE;
+     RANGE="'HW1-DATA$'"; 
+     GETNAMES=YES;
+     MIXED=NO;
+     SCANTEXT=YES;
+     USEDATE=YES;
+     SCANTIME=YES;
+RUN;
+
+/* obtain detailed statistics by using "proc univariate" on variable 'ENG' */
+/* proc univariate- very detailed descriptive statistics for continuous data */
+/*2*/
+proc univariate data = demo2;
+var eng;
+run;
+
+/* 3. Conduct regression by using OLS */
+proc reg data = demo2;
+model mpg = cyl eng hp wgt;
+run;
+
+/*4. Conduct hypothesis test */
+proc reg data = demo2;
+model mpg = cyl eng hp wgt;
+test cyl + eng = 1;
+run;
+
+/*5. Give resctriction on estimation of CYL = 0 */
+proc reg data = demo2;
+model mpg = cyl eng hp wgt;
+restrict cyl = 0;
+run;
